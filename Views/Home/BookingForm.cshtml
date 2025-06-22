@@ -1,0 +1,177 @@
+﻿@{
+    ViewBag.Title = "Booking Form";
+    var service = ViewBag.ServiceType ?? "Unknown";
+}
+
+<style>
+    label {
+        color: #367588;
+        font-weight: bold;
+    }
+
+    .form-section {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        width: 100%;
+    }
+
+    .booking-btn {
+        background-color: #367588;
+        color: white;
+        font-weight: bold;
+    }
+</style>
+
+<h2 class="text-center" style="color:#367588; font-weight:bold;">@service</h2>
+
+<div class="container mt-4">
+    <form id="bookingForm">
+        <input type="hidden" id="serviceType" value="@service" />
+
+        <div class="row form-section">
+            <div class="col-md-6">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row form-section">
+            <div class="col-md-6">
+                <label for="pickupTime">Pick-up Time</label>
+                <input type="datetime-local" id="pickupTime" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+                <label for="reason">Reason</label>
+                <select id="reason" class="form-control" required>
+                    <option value="">-- Select Reason --</option>
+                    <option value="Emergency">Accident</option>
+                    <option value="Routine Checkup">Checkup</option>
+                    <option value="Patient Transfer">Transfer</option>
+                    <option value="Patient Transfer">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row form-section">
+            <div class="col-md-6">
+                <label for="vehicle">Vehicle</label>
+                <select id="vehicle" class="form-control" required></select>
+            </div>
+            <div class="col-md-6">
+                <label for="driver">Driver</label>
+                <select id="driver" class="form-control" required></select>
+            </div>
+        </div>
+
+        <div class="row form-section">
+            <div class="col-md-12">
+                <label for="address">Pick-up Address</label>
+                <input type="text" id="address" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn booking-btn btn-lg">BOOK AMBULANCE</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    //vehicles- 2 vehicles for each service
+    const vehicles = [
+        { name: "ALS-Tate Winger Ambulance", service: "Advanced Life Support" },
+        { name: "ALS-Force Traveller Ambulance", service: "Advanced Life Support" },
+        { name: "BLS-Truck 1", service: "Basic Life Support" },
+        { name: "BLS-Truck 2", service: "Basic Life Support" },
+        { name: "Patient Van 1", service: "Patient Support" },
+        { name: "Patient Van 2", service: "Patient Support" },
+        { name: "Utility Jeep 1", service: "Medical Utility Vehicle" },
+        { name: "Utility Jeep 2", service: "Medical Utility Vehicle" },
+        { name: "Event Ambulance 1", service: "Event Medical Ambulance" },
+        { name: "Event Ambulance 2", service: "Event Medical Ambulance" },
+        { name: "Air Helicopter 1", service: "Air Ambulance" },
+        { name: "Air Helicopter 2", service: "Air Ambulance" }
+    ];
+    //drivers- 2 for each service
+    const drivers = [
+        { name: "Koketso", service: "Advanced Life Support" },
+        { name: "Theo", service: "Advanced Life Support" },
+        { name: "Kamano", service: "Basic Life Support" },
+        { name: "Kamohelo", service: "Basic Life Support" },
+        { name: "Meher", service: "Patient Support" },
+        { name: "Karabo", service: "Patient Support" },
+        { name: "Alex ", service: "Medical Utility Vehicle" },
+        { name: "Thabo ", service: "Medical Utility Vehicle" },
+        { name: "Siya", service: "Event Medical Ambulance" },
+        { name: "Palesa", service: "Event Medical Ambulance" },
+        { name: "Lerato", service: "Air Ambulance" },
+        { name: "Themba", service: "Air Ambulance" }
+    ];
+
+    const selectedService = document.getElementById("serviceType").value;
+    const SelectVehicle = document.getElementById("vehicle");
+    const SelectDriver = document.getElementById("driver");
+
+    SelectVehicle.innerHTML = "";
+    SelectDriver.innerHTML = "";
+
+    const vehiclePlaceholder = document.createElement("option");
+    vehiclePlaceholder.text = "-- Select Vehicle --";
+    vehiclePlaceholder.value = "";
+    vehiclePlaceholder.disabled = true;
+    vehiclePlaceholder.selected = true;
+    SelectVehicle.add(vehiclePlaceholder);
+
+    const driverPlaceholder = document.createElement("option");
+    driverPlaceholder.text = "-- Select Driver --";
+    driverPlaceholder.value = "";
+    driverPlaceholder.disabled = true;
+    driverPlaceholder.selected = true;
+    SelectDriver.add(driverPlaceholder);
+
+    vehicles.filter(v => v.service === selectedService).forEach(v => {
+        const option = document.createElement("option");
+        option.value = v.name;
+        option.text = v.name;
+        SelectVehicle.add(option);
+    });
+
+    drivers.filter(d => d.service === selectedService).forEach(d => {
+        const option = document.createElement("option");
+        option.value = d.name;
+        option.text = d.name;
+        SelectDriver.add(option);
+    });
+
+    document.getElementById("bookingForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const newBooking = {
+            id: crypto.randomUUID(),
+            date: new Date().toISOString(),
+            serviceType: selectedService,
+            name: document.getElementById("fullName").value,
+            phone: document.getElementById("phone").value,
+            pickupTime: document.getElementById("pickupTime").value,
+            reason: document.getElementById("reason").value,
+            vehicle: SelectVehicle.value,
+            driver: SelectDriver.value,
+            address: document.getElementById("address").value,
+            isSOS: false
+        };
+
+        let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+        bookings.push(newBooking);
+
+        localStorage.setItem("bookings", JSON.stringify(bookings));
+        localStorage.setItem("latestBooking", JSON.stringify(newBooking));
+
+        window.location.href = "/Home/BookingConfirmed";
+    });
+</script>

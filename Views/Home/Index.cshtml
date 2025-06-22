@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "Home";
+}
+
+<style>
+    body{
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden; 
+    }
+
+    .Home-images {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
+
+    .section-text {
+        color: #367588;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .btn-style {
+        background-color: #367588;
+        color: white;
+        font-weight: bold;
+        padding: 10px 25px;
+        text-decoration: none;
+    }
+</style>
+
+<div class="container-fluid px-0">
+    <!--ambulance row -->
+    <div class="row g-0">
+        <div class="col-md-10 section-text">
+            <h2 style="font-weight: bold;">A real O.K. team here to try and save you</h2>
+            <p>If you're still breathing once you've reached the hospital we've done our job successfully!</p>
+            <a href="@Url.Action("SelectService", "Home")" class="btn btn-style mt-2">BOOK AMBULANCE</a>
+        </div>
+        <div class="col-md-2">
+            <img src="~/Content/images/ambulance.jpg" alt="Ambulance" class="Home-images" />
+        </div>
+    </div>
+
+    <!--sos row -->
+    <div class="row g-0 bg-light">
+        <div class="col-md-10 section-text">
+            <h2 style="font-weight: bold;">Emergency?</h2>
+            <p>Only hit the button for real emergencies mind you...</p>
+            <p>Stepping on a thumbtack at 3am while doing arts is not an emergency</p>
+            <button id="sosButton" class="btn btn-style mt-2" style="background-color: #045D5D; ">S.O.S.</button>
+        </div>
+        <div class="col-md-2">
+            <img src="~/Content/images/sos.jpg" alt="SOS" class="Home-images" />
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("sosButton").addEventListener("click", function (e) { 
+
+        const drivers = ["Koketso", "Karabo", "Theo","Meher","Kamano","Themba",];//arrys stroing the drivers and the vehicles
+        const vehicles = ["ALS-Tate Winger Ambulance", "ALS-Force Traveller Ambulance", "BLS-Truck 1", "BLS-Truck 2", "Patient Van 1", "Patient Van 2", "Utility Jeep 1"]; 
+          
+
+        const randomDriver = drivers[Math.floor(Math.random() * drivers.length)];//randomize driver and the vehicles. only picks one driver and one vehicle
+        const randomVehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
+
+        const sosBooking = { //creating the booking object
+            id: crypto.randomUUID(),//uniques identifier
+            date: new Date(),
+            name: "Emergency",
+            phone: "Not Provided",
+            pickupTime: new Date().toLocaleTimeString(),
+            address: "Not Provided",
+            serviceType: "S.O.S. Emergency",
+            reason: "Emergency Booking",
+            driver: randomDriver,
+            vehicle: randomVehicle,
+            isSOS: true
+        };
+
+        //saves to localstorage
+        let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+        bookings.push(sosBooking);
+        localStorage.setItem("bookings", JSON.stringify(bookings));
+        localStorage.setItem("latestBooking", JSON.stringify(sosBooking));
+
+        window.location.href = "/Home/BookingConfirmed";// take the user to the bookingconfirmed page(view)
+    });
+</script>

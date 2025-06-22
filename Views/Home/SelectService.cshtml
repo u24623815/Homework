@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "Select a Service";
+}
+
+<style>
+    .service-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 15px 0;
+        text-align: center;
+        transition: 0.3s;
+        cursor: pointer;
+        color: #367588;
+        font-weight: bold;
+        height: 100%;
+    }
+
+        .service-card:hover {
+            background-color: #f0f0f0;
+        }
+
+    .service-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    .service-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .service-info {
+        font-weight: normal;
+        font-size: 0.95rem;
+    }
+
+    .row > .col-md-4 {
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="container mt-4">
+    <h2 class="text-center" style="color: #367588; font-weight: bold;">Select a Service...</h2>
+    <p class="text-center" style="color: #367588;">
+        Please choose the type of service you need
+    </p>
+
+    <div class="row">
+        <!--ALS -->
+        <div class="col-md-4 d-flex">
+            <a href="@Url.Action("BookingForm", "Home", new { serviceType = "Advanced Life Support" })" style="text-decoration: none; width: 100%;">
+                <div class="service-card">
+                    <img src="~/Content/images/als.jpg" alt="Advanced Life Support" class="service-img" />
+                    <div class="service-title">Advanced Life Support</div>
+                    <div class="service-info">ALS ambulance is staffed by a Paramedic and is used to transport patients who require high level of care</div>
+                </div>
+            </a>
+        </div>
+
+        <!--BLS -->
+        <div class="col-md-4 d-flex">
+            <a href="@Url.Action("BookingForm", "Home", new { serviceType = "Basic Life Support" })" style="text-decoration: none; width: 100%;">
+                <div class="service-card">
+                    <img src="~/Content/images/bls.jpg" alt="Basic Life Support" class="service-img" />
+                    <div class="service-title">Basic Life Support</div>
+                    <div class="service-info">BLS ambulance is provdes transport to patients who are in a non-life threatening condition</div>
+                </div>
+            </a>
+        </div>
+
+        <!--Patient Transport -->
+        <div class="col-md-4 d-flex">
+            <a href="@Url.Action("BookingForm", "Home", new { serviceType = "Patient Transport" })" style="text-decoration: none; width: 100%;">
+                <div class="service-card">
+                    <img src="~/Content/images/patient.jpg" alt="Patient Transport" class="service-img" />
+                    <div class="service-title">Patient Transport</div>
+                    <div class="service-info">The most basic type of transport for patients requiring ambulatory support to and from the hospital</div>
+                </div>
+            </a>
+        </div>
+
+        <!--Medical Utility Vehicle -->
+        <div class="col-md-4 d-flex">
+            <a href="@Url.Action("BookingForm", "Home", new { serviceType = "Medical Utility Vehicle" })" style="text-decoration: none; width: 100%;">
+                <div class="service-card">
+                    <img src="~/Content/images/medical.jpg" alt="Medical Utility Vehicle" class="service-img" />
+                    <div class="service-title">Medical Utility Vehicle</div>
+                    <div class="service-info">A state-of-art small of large van that is designed to facilitate the movement and transport of patients</div>
+                </div>
+            </a>
+        </div>
+
+        <!--Event Medical Ambulance -->
+        <div class="col-md-4 d-flex">
+            <a href="@Url.Action("BookingForm", "Home", new { serviceType = "Event Medical Ambulance" })" style="text-decoration: none; width: 100%;">
+                <div class="service-card">
+                    <img src="~/Content/images/event.jpg" alt="Event Medical Ambulance" class="service-img" />
+                    <div class="service-title">Event Medical Ambulance</div>
+                    <div class="service-info">Ambulances that are stationed at events, such as concerts, sport games, and festivals, to provide medical assistance</div>
+                </div>
+            </a>
+        </div>
+
+        <!--Air Ambulance -->
+        <div class="col-md-4 d-flex">
+            <a href="@Url.Action("BookingForm", "Home", new { serviceType = "Air Ambulance" })" style="text-decoration: none; width: 100%;">
+                <div class="service-card">
+                    <img src="~/Content/images/air.jpg" alt="Air Ambulance" class="service-img" />
+                    <div class="service-title">Air Ambulance</div>
+                    <div class="service-info">Air ambulance help in the transfer of patients across long distances in both emergency and non-emergency situations</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,121 @@
+﻿@{
+    ViewBag.Title = "Booking Confirmed";
+}
+
+<style>
+    body {
+        background-color: #f2f2f2;
+    }
+
+    .bubble {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    h4 {
+        color: #367588;
+        font-weight: bold;
+    }
+
+    p {
+        color: #367588;
+    }
+</style>
+
+<h2 class="text-center" style="color:#367588; font-weight:bold; margin-top: 20px;">Booking Confirmed</h2>
+
+<div class="container mt-4">
+    <div id="bookingContent"></div>
+</div>
+
+<script>
+    const booking = JSON.parse(localStorage.getItem("latestBooking"));
+
+    const driverImages = {
+        "Koketso": "/Content/images/Koketso.png",
+        "Alex": "/Content/images/Alex.png",
+        "Kamano": "/Content/images/Kamano.png",
+        "Kamohelo": "/Content/images/Kamohelo.png",
+        "Karabo": "/Content/images/Karabo.png",
+        "Lerato": "/Content/images/Lerato.png",
+        "Meher": "/Content/images/Meher.png",
+        "Palesa": "/Content/images/Palesa.png",
+        "Siya": "/Content/images/Siya.png",
+        "Thabo": "/Content/images/Thabo.png",
+        "Themba": "/Content/images/Themba.png",
+        "Theo": "/Content/images/Theo.png",
+    };
+
+    const driverPhones = {
+        "Koketso": "083 123 4567",
+        "Alex": "083 123 4510",
+        "Kamano": "083 123 4511",
+        "Kamohelo": "083 123 4522",
+        "Karabo": "083 123 4533",
+        "Lerato": "083 123 4544",
+        "Meher": "083 123 4555",
+        "Palesa": "083 123 4566",
+        "Siya": "083 123 4577",
+        "Thabo": "083 123 4588",
+        "Themba": "083 123 4599",
+        "Theo": "083 123 4100"
+    };
+
+    const vehicleRegistrations = {
+        "ALS-Tate Winger Ambulance": "REG123-ALS",
+        "ALS-Force Traveller Ambulance": "REG124-ALS",
+        "BLS-Truck 1": "REG456-BLS",
+        "BLS-Truck 2": "REG457-BLS",
+        "Patient Van 1": "REG789-PT",
+        "Patient Van 2": "REG790-PT",
+        "Utility Jeep 1": "REG901-MUV",
+        "Utility Jeep 2": "REG902-MUV",
+        "Event Ambulance 1": "REG111-EVT",
+        "Event Ambulance 2": "REG112-EVT",
+        "Air Helicopter 1": "REG333-AIR",
+        "Air Helicopter 2": "REG334-AIR"
+    };
+
+    function formatPickupTime(timeString) {
+        if (!timeString) return "Not provided";
+        const dt = new Date(timeString);
+        return isNaN(dt) ? timeString : dt.toLocaleString();
+    }
+
+    if (booking) {
+        const driverImg = driverImages[booking.driver] || "/Content/images/logo.jpg";
+        const driverPhone = driverPhones[booking.driver] || "Not available";
+        const regNum = vehicleRegistrations[booking.vehicle] || "Unknown";
+        const formattedPickupTime = formatPickupTime(booking.pickupTime);
+
+        document.getElementById("bookingContent").innerHTML = `
+            <div class="bubble">
+                <h4>Booking Details</h4>
+                <p><strong>Booking ID:</strong> ${booking.id}</p>
+                <p><strong>Date Booked:</strong> ${new Date(booking.date).toLocaleString()}</p>
+                <p><strong>Pick-Up Time:</strong> ${formattedPickupTime}</p>
+                <p><strong>Pick-Up Address:</strong> ${booking.address}</p>
+            </div>
+
+            <div class="bubble d-flex align-items-center">
+                <img src="${driverImg}" alt="Driver ${booking.driver}" style="width:150px; height:150px; object-fit:cover; margin-right:20px; border-radius:10px;" />
+                <div>
+                    <h4>Driver Details</h4>
+                    <p><strong>Name:</strong> ${booking.driver}</p>
+                    <p><strong>Phone:</strong> ${driverPhone}</p>
+                </div>
+            </div>
+
+            <div class="bubble">
+                <h4>Ambulance Details</h4>
+                <p><strong>Ambulance Type:</strong> ${booking.vehicle}</p>
+                <p><strong>Registration Number:</strong> ${regNum}</p>
+            </div>
+        `;
+    } else {
+        document.getElementById("bookingContent").innerHTML = "<p>No booking found.</p>";
+    }
+</script>

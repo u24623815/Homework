@@ -1,0 +1,569 @@
+﻿@{
+    ViewBag.Title = "Driver & Vehicle Management";
+}
+
+
+
+<style>
+
+    body {
+        background-color: #D3D3D3;
+    }
+          
+    .entity-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .entity-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    .entity-info {
+        flex-grow: 1;
+    }
+
+    .entity-actions button {
+        margin-left: 10px;
+    }
+
+    .form-section {
+        margin-top: 20px;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .export-btn {
+        background-color: #367588;
+        color: white;
+        font-weight: bold;
+    }
+
+
+    table.driver-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: #fff;
+    }
+
+     table.driver-table th, table.driver-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+     }
+
+    table.driver-table th {
+            background-color: #367588;
+            color: white;
+            font-weight: bold;
+     }
+
+    table.driver-table img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+    }
+</style>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="color:#367588; font-weight:bold;">Driver & Vehicle Management</h2>
+    <!-- dd/Edit Driver -->
+    <div class="form-section">
+        <h5>Add / Edit Driver</h5>
+        <form id="driverForm">
+            <input type="hidden" id="driverId" />
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <input type="text" id="driverFirstName" class="form-control" placeholder="First Name" required />
+                </div>
+                <div class="col-md-4">
+                    <input type="text" id="driverLastName" class="form-control" placeholder="Last Name" required />
+                </div>
+                <div class="col-md-4">
+                    <select id="driverServiceType" class="form-select" required>
+                        <option value="">Select Service Type</option>
+                        <option>Advanced Life Support</option>
+                        <option>Basic Life Support</option>
+                        <option>Patient Support</option>
+                        <option>Medical Utility Vehicle</option>
+                        <option>Event Medical Ambulance</option>
+                        <option>Air Ambulance</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <input type="text" id="driverPhone" class="form-control" placeholder="Phone Number" required />
+                </div>
+                <div class="col-md-4">
+                    <input type="text" id="driverImageUrl" class="form-control" placeholder="Image URL (optional)" />
+                </div>
+                <div class="col-md-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success me-2">Save Driver</button>
+                    <button type="button" id="driverFormClearBtn" class="btn btn-secondary">Clear</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!--Add/Edit Vehicle -->
+    <div class="form-section mt-4 mb-5">
+        <h5>Add / Edit Vehicle</h5>
+        <form id="vehicleForm">
+            <input type="hidden" id="vehicleId" />
+            <div class="row mb-2">
+                <div class="col-md-3">
+                    <input type="text" id="vehicleName" class="form-control" placeholder="Vehicle Name" required />
+                </div>
+                <div class="col-md-3">
+                    <select id="vehicleServiceType" class="form-select" required>
+                        <option value="">Select Service Type</option>
+                        <option>Advanced Life Support</option>
+                        <option>Basic Life Support</option>
+                        <option>Patient Support</option>
+                        <option>Medical Utility Vehicle</option>
+                        <option>Event Medical Ambulance</option>
+                        <option>Air Ambulance</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="vehicleRegistration" class="form-control" placeholder="Registration Number" required />
+                </div>
+                <div class="col-md-3">
+                    <input type="text" id="vehicleImageUrl" class="form-control" placeholder="Image URL (optional)" />
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-success me-2">Save Vehicle</button>
+                <button type="button" id="vehicleFormClearBtn" class="btn btn-secondary">Clear</button>
+            </div>
+        </form>
+    </div>
+   
+
+    <!-- search the driver-->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <input type="text" id="searchFirstName" class="form-control" placeholder="Search Driver First Name" /><!--first name-->
+        </div>
+        <div class="col-md-4">
+            <!--Dropdown list-->
+            <select id="searchServiceType" class="form-select">
+                <option value="">-- Search by Service Type --</option>
+                <option>Advanced Life Support</option>
+                <option>Basic Life Support</option>
+                <option>Patient Support</option>
+                <option>Medical Utility Vehicle</option>
+                <option>Event Medical Ambulance</option>
+                <option>Air Ambulance</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button id="searchBtn" class="btn btn-primary w-100">Search Drivers</button>
+        </div>
+    </div>
+
+    <!--Drivers List -->
+    <h4 style="color:#367588;">Drivers</h4>
+    <div id="driversList"></div>
+
+    <!--Vehicles List -->
+    <h4 class="mt-5" style="color:#367588;">Vehicles</h4>
+    <div id="vehiclesList"></div>
+
+    <button id="exportVehiclesBtn" class="btn export-btn mb-4">Export Vehicles to Text File</button>
+
+   </div>
+<button onclick="resetDemoDrivers()" class="btn btn-warning mb-3">Reset Driver</button>
+<button onclick="resetDemoVehicles()" class="btn btn-warning mb-3">Reset Vehicle </button>
+
+
+<script>
+
+    // array
+    const manageDrivers = [
+        { id: 'd1', firstName: 'Koketso', lastName: 'Motsoeneng', serviceType: 'Advanced Life Support', imageUrl: '/Content/images/Koketso.png', phone: '083 123 4567' },
+        { id: 'd2', firstName: 'Alex', lastName: 'Nkosi', serviceType: 'Basic Life Support', imageUrl: '/Content/images/Alex.png', phone: '083 123 4510' },
+        { id: 'd3', firstName: 'Kamano', lastName: 'Zulu', serviceType: 'Patient Support', imageUrl: '/Content/images/Kamano.png', phone: '083 123 4511' },
+        { id: 'd4', firstName: 'Kamohelo', lastName: 'Nkomo', serviceType: 'Medical Utility Vehicle', imageUrl: '/Content/images/Kamohelo.png', phone: '083 123 4522' },
+        { id: 'd5', firstName: 'Karabo', lastName: 'Moloi', serviceType: 'Event Medical Ambulance', imageUrl: '/Content/images/Karabo.png', phone: '083 123 4533' },
+        { id: 'd6', firstName: 'Lerato', lastName: 'Mokoena', serviceType: 'Air Ambulance', imageUrl: '/Content/images/Lerato.png', phone: '083 123 4544' },
+        { id: 'd7', firstName: 'Meher', lastName: 'Naidoo', serviceType: 'Basic Life Support', imageUrl: '/Content/images/Meher.png', phone: '083 123 4555' },
+        { id: 'd8', firstName: 'Palesa', lastName: 'Dlamini', serviceType: 'Patient Support', imageUrl: '/Content/images/Palesa.png', phone: '083 123 4566' },
+        { id: 'd9', firstName: 'Siya', lastName: 'Ndlovu', serviceType: 'Event Medical Ambulance', imageUrl: '/Content/images/Siya.png', phone: '083 123 4577' },
+        { id: 'd10', firstName: 'Thabo', lastName: 'Mabena', serviceType: 'Medical Utility Vehicle', imageUrl: '/Content/images/Thabo.png', phone: '083 123 4588' },
+        { id: 'd11', firstName: 'Theo', lastName: 'Nxumalo', serviceType: 'Advanced Life Support', imageUrl: '/Content/images/Theo.png', phone: '083 123 4100' },
+        { id: 'd12', firstName: 'Themba', lastName: 'Khwezi', serviceType: 'Air Ambulance', imageUrl: '/Content/images/Themba.png', phone: '083 123 4599' }
+    ];
+
+
+    const manageVehicles = [
+        { id: 'v1', name: "ALS-Tate Winger Ambulance", serviceType: "Advanced Life Support", imageUrl: '/Content/images/als.jpg', registration: "ABC123GP" },
+        { id: 'v2', name: "ALS-Force Traveller Ambulance", serviceType: "Advanced Life Support", imageUrl: '/Content/images/als1.png', registration: "DEF456GP" },
+        { id: 'v3', name: "BLS-Truck 1", serviceType: "Basic Life Support", imageUrl: '/Content/images/bls.jpg', registration: "BLS001GP" },
+        { id: 'v4', name: "BLS-Truck 2", serviceType: "Basic Life Support", imageUrl: '/Content/images/bls1.png', registration: "BLS002GP" },
+        { id: 'v5', name: "Patient Van 1", serviceType: "Patient Support", imageUrl: '/Content/images/patient.jpg', registration: "PAT001GP" },
+        { id: 'v6', name: "Patient Van 2", serviceType: "Patient Support", imageUrl: '/Content/images/patient1.png', registration: "PAT002GP" },
+        { id: 'v7', name: "Utility Jeep 1", serviceType: "Medical Utility Vehicle", imageUrl: '/Content/images/utility.png', registration: "UTL001GP" },
+        { id: 'v8', name: "Utility Jeep 2", serviceType: "Medical Utility Vehicle", imageUrl: '/Content/images/utility1.png', registration: "UTL002GP" },
+        { id: 'v9', name: "Event Ambulance 1", serviceType: "Event Medical Ambulance", imageUrl: '/Content/images/event.jpg', registration: "EVT001GP" },
+        { id: 'v10', name: "Event Ambulance 2", serviceType: "Event Medical Ambulance", imageUrl: '/Content/images/event1.png', registration: "EVT002GP" },
+        { id: 'v11', name: "Air Helicopter 1", serviceType: "Air Ambulance", imageUrl: '/Content/images/air.jpg', registration: "AIR001GP" },
+        { id: 'v12', name: "Air Helicopter 2", serviceType: "Air Ambulance", imageUrl: '/Content/images/air1.png', registration: "AIR002GP" }
+    ];
+    //localstorage
+
+    //check whether the storage is empty or not
+    if (!localStorage.getItem('drivers')) {
+        localStorage.setItem('drivers', JSON.stringify(manageDrivers));
+    }
+    if (!localStorage.getItem('vehicles')) {
+        localStorage.setItem('vehicles', JSON.stringify(manageVehicles));
+    }
+
+
+   //create unique identifier
+    function generateId(prefix) {
+        return prefix + Math.random().toString(36).substr(2, 9);
+    }
+
+    // load drivers and vehicles
+    function getDrivers() {
+        return JSON.parse(localStorage.getItem('drivers')) || [];
+    }
+    function getVehicles() {
+        return JSON.parse(localStorage.getItem('vehicles')) || [];
+    }
+
+    //save the drivers and the vehicles to localStorage
+    function saveDrivers(drivers) {
+        localStorage.setItem('drivers', JSON.stringify(drivers));
+    }
+    function saveVehicles(vehicles) {
+        localStorage.setItem('vehicles', JSON.stringify(vehicles));
+    }
+
+    //render lists
+    function renderDrivers(drivers) {
+        const container = document.getElementById('driversList');
+        container.innerHTML = '';
+
+        if (drivers.length === 0) {
+            container.innerHTML = '<p>No drivers found.</p>';
+            return;
+        }
+
+        let table = `
+        <table class="driver-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Phone Number</th>
+                    <th>Service Type</th>
+                    <th>Controls</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+        drivers.forEach(driver => {
+            table += `
+            <tr>
+                <td><img src="${driver.imageUrl || '/Content/images/default-driver.jpg'}" alt="driver"></td>
+                <td>${driver.firstName}</td>
+                <td>${driver.lastName}</td>
+                <td>${driver.phone || 'N/A'}</td>
+                <td>${driver.serviceType}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary edit-driver" data-id="${driver.id}">Edit</button>
+                    <button class="btn btn-sm btn-danger delete-driver" data-id="${driver.id}">Delete</button>
+                </td>
+            </tr>
+        `;
+        });
+
+        table += `</tbody></table>`;
+        container.innerHTML = table;
+
+        //edit
+        document.querySelectorAll('.edit-driver').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const id = e.target.getAttribute('data-id');
+                editDriver(id);
+            });
+        });
+        //delete
+        document.querySelectorAll('.delete-driver').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const id = e.target.getAttribute('data-id');
+                if (confirm('Delete this driver?')) {
+                    deleteDriver(id);
+                }
+            });
+        });
+    }
+
+
+    //list-vehicle render it
+    function renderVehicles(vehicles) {
+        const container = document.getElementById('vehiclesList');
+        container.innerHTML = '';
+
+        if (vehicles.length === 0) {
+            container.innerHTML = '<p>No vehicles found.</p>';
+            return;
+        }
+
+        let table = `
+        <table class="driver-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Service Type</th>
+                    <th>Registration</th>
+                    <th>Controls</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+        vehicles.forEach(vehicle => {
+            table += `
+            <tr>
+                <td><img src="${vehicle.imageUrl || '/Content/images/default-vehicle.jpg'}" alt="vehicle" /></td>
+                <td>${vehicle.name}</td>
+                <td>${vehicle.serviceType}</td>
+                <td>${vehicle.registration || 'N/A'}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary edit-vehicle" data-id="${vehicle.id}">Edit</button>
+                    <button class="btn btn-sm btn-danger delete-vehicle" data-id="${vehicle.id}">Delete</button>
+                </td>
+            </tr>
+        `;
+        });
+
+        table += `</tbody></table>`;
+        container.innerHTML = table;
+
+        //edit
+        document.querySelectorAll('.edit-vehicle').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const id = e.target.getAttribute('data-id');
+                editVehicle(id);
+            });
+        });
+
+        //delete
+        document.querySelectorAll('.delete-vehicle').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const id = e.target.getAttribute('data-id');
+                if (confirm('Delete this vehicle?')) {
+                    deleteVehicle(id);
+                }
+            });
+        });
+    }
+
+
+    // edit the driver
+    function editDriver(id) {
+        const drivers = getDrivers();
+        const driver = drivers.find(d => d.id === id);
+        if (!driver) return alert('Driver not found');
+
+        document.getElementById('driverId').value = driver.id;
+        document.getElementById('driverFirstName').value = driver.firstName;
+        document.getElementById('driverLastName').value = driver.lastName;
+        document.getElementById('driverServiceType').value = driver.serviceType;
+        document.getElementById('driverImageUrl').value = driver.imageUrl || '';
+        document.getElementById('driverPhone').value = driver.phone || '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    //delete the driver function
+    function deleteDriver(id) {
+        let drivers = getDrivers();
+        drivers = drivers.filter(d => d.id !== id);
+        saveDrivers(drivers);
+        renderDrivers(drivers);
+    }
+
+    //edit the vehicle
+    function editVehicle(id) {
+        const vehicles = getVehicles();
+        const vehicle = vehicles.find(v => v.id === id);
+        if (!vehicle) return alert('Vehicle not found');
+
+        document.getElementById('vehicleId').value = vehicle.id;
+        document.getElementById('vehicleName').value = vehicle.name;
+        document.getElementById('vehicleServiceType').value = vehicle.serviceType;
+        document.getElementById('vehicleImageUrl').value = vehicle.imageUrl || '';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+
+    }
+
+    //delete the vehicle
+    function deleteVehicle(id) {
+        let vehicles = getVehicles();
+        vehicles = vehicles.filter(v => v.id !== id);
+        saveVehicles(vehicles);
+        renderVehicles(vehicles);
+    }
+
+    //clear the forms
+    document.getElementById('driverFormClearBtn').addEventListener('click', () => {
+        document.getElementById('driverForm').reset();
+        document.getElementById('driverId').value = '';
+        document.getElementById('driverPhone').value = '';
+
+    });
+
+    document.getElementById('vehicleFormClearBtn').addEventListener('click', () => {
+        document.getElementById('vehicleForm').reset();
+        document.getElementById('vehicleId').value = '';
+    });
+
+    // Add the driver
+    document.getElementById('driverForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const id = document.getElementById('driverId').value;
+        const firstName = document.getElementById('driverFirstName').value.trim();
+        const lastName = document.getElementById('driverLastName').value.trim();
+        const serviceType = document.getElementById('driverServiceType').value;
+        const imageUrl = document.getElementById('driverImageUrl').value.trim() || '/Content/images/default-driver.jpg';
+        const phone = document.getElementById('driverPhone').value.trim();
+
+        if (!firstName || !lastName || !serviceType) {
+            alert('Please fill all required driver fields.');
+            return;
+        }
+
+        let drivers = getDrivers();
+
+        if (id) {
+            const idx = drivers.findIndex(d => d.id === id);
+            if (idx > -1) {
+                drivers[idx] = { id, firstName, lastName, serviceType, imageUrl, phone };
+            }
+        } else {
+            drivers.push({ id: generateId('d'), firstName, lastName, serviceType, imageUrl, phone });//create
+        }
+
+        saveDrivers(drivers);
+        renderDrivers(drivers);
+        e.target.reset();
+        document.getElementById('driverId').value = '';
+    });
+
+
+    // add vehicle
+    document.getElementById('vehicleForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const id = document.getElementById('vehicleId').value;
+        const name = document.getElementById('vehicleName').value.trim();
+        const serviceType = document.getElementById('vehicleServiceType').value;
+        const imageUrl = document.getElementById('vehicleImageUrl').value.trim() || '/Content/images/default-vehicle.jpg';
+        const registration = document.getElementById('vehicleRegistration')?.value.trim() || '';
+
+
+        if (!name || !serviceType) {
+            alert('Please fill all required vehicle fields.');
+            return;
+        }
+
+        let vehicles = getVehicles();
+
+        if (id) {
+            const idx = vehicles.findIndex(v => v.id === id);
+            if (idx > -1) {
+                vehicles[idx] = { id, name, serviceType, imageUrl, registration };
+            }
+        } else {
+            vehicles.push({ id: generateId('v'), name, serviceType, imageUrl, registration });
+        }
+
+        saveVehicles(vehicles);
+        renderVehicles(vehicles);
+        e.target.reset();
+        document.getElementById('vehicleId').value = '';
+    });
+
+    // Search drivers 
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        const firstNameSearch = document.getElementById('searchFirstName').value.trim().toLowerCase();
+        const serviceTypeSearch = document.getElementById('searchServiceType').value;
+
+        let drivers = getDrivers();
+
+        if (firstNameSearch) {
+            drivers = drivers.filter(d => d.firstName.toLowerCase().includes(firstNameSearch));
+        }
+
+        if (serviceTypeSearch) {
+            drivers = drivers.filter(d => d.serviceType === serviceTypeSearch);
+        }
+
+        renderDrivers(drivers);
+    });
+
+    //textfile
+    document.getElementById('exportVehiclesBtn').addEventListener('click', () => {
+        const vehicles = getVehicles();
+
+        if (vehicles.length === 0) {
+            alert('No vehicles to export.');
+            return;
+        }
+
+        let text = 'Vehicle Name,Service Type,Registration\n';
+        vehicles.forEach(v => {
+            text += `"${v.name}","${v.serviceType}","${v.registration || ''}"\n`;
+        });
+
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'vehicles.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    // load table/entity -render
+    renderDrivers(getDrivers());
+    renderVehicles(getVehicles());
+
+
+    function resetDemoDrivers() {
+        localStorage.setItem('drivers', JSON.stringify(manageDrivers));
+        renderDrivers(manageDrivers);
+    }
+
+    function resetDemoVehicles() {
+        localStorage.setItem('vehicles', JSON.stringify(manageVehicles));
+        renderVehicles(manageVehicles);
+    }
+</script>
+

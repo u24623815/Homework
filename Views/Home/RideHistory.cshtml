@@ -1,0 +1,98 @@
+﻿@{
+    ViewBag.Title = "Ride History";
+}
+
+<style>
+    body {
+        background-color: #f2f2f2;
+    }
+
+    .ride-card {
+        background-color: white;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: background-color 0.3s;
+        outline: none;
+    }
+
+        .ride-card:hover,
+        .ride-card:focus {
+            background-color: #f9f9f9;
+            outline: none;
+        }
+
+    .sos-ride {
+        border-left: 8px solid red;
+        background-color: #ffe6e6;
+    }
+
+    h2 {
+        color: #367588;
+        font-weight: bold;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .ride-title {
+        color: #367588;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .ride-info {
+        color: #367588;
+        margin: 2px 0;
+    }
+
+    .no-rides {
+        margin-top: 30px;
+        font-style: italic;
+    }
+</style>
+
+<h2>Ride History</h2>
+
+<div class="container mt-4" id="rideHistoryContainer"></div>
+
+<script>
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const container = document.getElementById("rideHistoryContainer");
+
+    if (bookings.length === 0) {
+        container.innerHTML = "<p class='text-center ride-info no-rides'>No rides found.</p>";
+    } else {
+        // show all bookings
+        bookings.slice().reverse().forEach(booking => {
+            const isSOS = booking.isSOS;
+            const div = document.createElement("div");
+            div.className = "ride-card" + (isSOS ? " sos-ride" : "");
+            div.setAttribute("tabindex", "0");
+
+            div.innerHTML = `
+                     <p class="ride-title"><strong>Date:</strong> ${new Date(booking.date).toLocaleString()}</p>
+                     <p class="ride-info"><strong>Booking ID:</strong> ${booking.id}</p>
+                     <p class="ride-info"><strong>Ambulance Type:</strong> ${booking.vehicle}</p>
+                     <p class="ride-info"><strong>Pick-up Address:</strong> ${booking.address}</p>
+`;
+
+
+            div.addEventListener("click", () => {
+                localStorage.setItem("latestBooking", JSON.stringify(booking));
+                window.location.href = "/Home/BookingConfirmed";
+            });
+
+           
+            div.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    div.click();
+                }
+            });
+
+            container.appendChild(div);
+        });
+    }
+</script>
